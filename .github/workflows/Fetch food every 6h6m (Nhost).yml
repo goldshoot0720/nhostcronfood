@@ -1,9 +1,22 @@
-- name: Fetch food from Nhost GraphQL (debug)
-  run: |
-    set -x
-    curl -v -X POST "$NHOST_GRAPHQL_URL" \
-      -H "Content-Type: application/json" \
-      -H "x-hasura-admin-secret: $NHOST_ADMIN_SECRET" \
-      -d '{
-        "query": "query { food { id name amount price shop to_date photo photohash } }"
-      }'
+name: Fetch food every 6h6m (Nhost)
+
+on:
+  schedule:
+    - cron: "6 */6 * * *"
+  workflow_dispatch:
+
+jobs:
+  fetch_food:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch food from Nhost GraphQL (debug)
+        run: |
+          set -x
+          curl -v -X POST "$NHOST_GRAPHQL_URL" \
+            -H "Content-Type: application/json" \
+            -H "x-hasura-admin-secret: $NHOST_ADMIN_SECRET" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "query": "query { food { id name amount price shop to_date photo photohash } }"
+            }'
