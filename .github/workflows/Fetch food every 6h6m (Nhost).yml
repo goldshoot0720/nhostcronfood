@@ -9,14 +9,22 @@ jobs:
   fetch_food:
     runs-on: ubuntu-latest
 
+    env:
+      NHOST_GRAPHQL_URL: ${{ secrets.NHOST_GRAPHQL_URL }}
+      NHOST_ADMIN_SECRET: ${{ secrets.NHOST_ADMIN_SECRET }}
+
     steps:
-      - name: Fetch food from Nhost GraphQL (debug)
+      - name: Check env loaded
+        run: |
+          echo "URL set? ${NHOST_GRAPHQL_URL:+yes}"
+          echo "SECRET set? ${NHOST_ADMIN_SECRET:+yes}"
+
+      - name: Fetch food from Nhost GraphQL
         run: |
           set -x
           curl -v -X POST "$NHOST_GRAPHQL_URL" \
             -H "Content-Type: application/json" \
             -H "x-hasura-admin-secret: $NHOST_ADMIN_SECRET" \
-            -H "Content-Type: application/json" \
             -d '{
               "query": "query { food { id name amount price shop to_date photo photohash } }"
             }'
